@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import Button from '../../components/UI/Button/Button';
 import classes from './ContactData.module.css';
-import axios from '.././../components/Axios/axios-orders';
-import Spinner from '../../components/UI/Spinner/Spinner';
+import Modal from '../../components/UI/Modal/Modal';
+
 import Input from '../../components/UI/Input/Input';
+import { connect } from 'react-redux';
+import * as actions from '../../store/actions/index';
 
 class ContactData extends Component {
 	state = {
@@ -95,10 +97,25 @@ class ContactData extends Component {
 				}
 			}
 		},
-		loadingOrder: true,
+
 		button: false
 	};
 
+	onOrderHandler = () => {
+		//faz um loop no state atualizado e pega apenas o 'nome':'nome da pessoa, country:country da pessoa, etc...
+		let contactDataForPost = {};
+		for (let prop in this.state.orderForm) {
+			contactDataForPost[prop] = this.state.orderForm[prop].value;
+		}
+		//cria uma var e manda pro backend com axios.post (como parametro aqui, q vai pro redux):
+		const order = {
+			ingredients: this.props.ing,
+			price: this.props.totalPrice,
+			contact: contactDataForPost
+		};
+
+		this.props.orderHandler(order);
+	};
 	inputChangedHandler = (evt, inputName) => {
 		let updatedState = { ...this.state.orderForm };
 		updatedState[inputName].value = evt.target.value;
@@ -110,24 +127,10 @@ class ContactData extends Component {
 		this.setState({ orderForm: updatedState, button: true });
 	};
 
-	orderHandler = () => {
-		//faz um loop no state atualizado e pega apenas o 'nome':'nome da pessoa, country:country da pessoa, etc...
-		let contactData = {};
-		for (let prop in this.state.orderForm) {
-			contactData[prop] = this.state.orderForm[prop].value;
-		}
-		//cria uma var e manda pro backend com axios.post:
-		const order = {
-			ingredients: this.props.ingredients,
-			price: this.props.price,
-			contact: contactData
-		};
-		this.setState({ loadingOrder: false });
-		axios.post('/orders.json', order).then(response => {
-			this.setState({ loadingOrder: true }); //só faz essas funções quando chegar a resposta do post (sincrono) se eu coloco FORA do metodo axios.post.then,
-			this.props.history.replace('/'); // ele fara primeiro, pois o js é assincrono, nao vai ficar esperando a reposta do post
-		});
-	}; //se eu colocar algo aqui, ele faria PRIMEIRO, antes dos 2 de cima, pq os de cima dependem do post chegar no backend
+	onRedirectHandler = () => {
+		this.props.showModalFalseAfterFinish();
+		this.props.history.goBack();
+	};
 
 	render() {
 		const elementsArr = [];
@@ -144,7 +147,7 @@ class ContactData extends Component {
 		const disabledButton = validOrderButtton.includes(false);
 
 		let button = (
-			<Button btnStyle="Success" clicked={this.orderHandler}>
+			<Button btnStyle="Success" clicked={this.onOrderHandler}>
 				ORDER
 			</Button>
 		);
@@ -156,6 +159,7 @@ class ContactData extends Component {
 				</Button>
 			);
 		}
+
 		let ContactData = (
 			<div className={classes.ContactData}>
 				<h4> Enter your contact data</h4>
@@ -176,15 +180,35 @@ class ContactData extends Component {
 					})}
 				</form>
 				{button}
+
+				<Modal showModal={this.props.reduxShowModal}>
+					<p>FEITO</p>
+					<button onClick={this.onRedirectHandler}> Voltar </button>
+				</Modal>
 			</div>
 		);
-
-		if (!this.state.loadingOrder) {
-			ContactData = <Spinner />;
-		}
 
 		return ContactData;
 	}
 }
 
-export default ContactData;
+const mapStateToProps = state => {
+	return {
+		ing: state.burger.ing,
+		totalPrice: state.burger.totalPrice,
+		reduxShowModal: state.contactData.showModal
+	};
+};
+
+const mapDispatchToProps = dispatch => {
+	return {
+		orderHandler: order => {
+			dispatch(actions.orderHandler(order));
+		},
+		showModalFalseAfterFinish: () => {
+			dispatch(actions.setModalHandler());
+		}
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactData);

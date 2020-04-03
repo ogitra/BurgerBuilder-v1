@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import CheckoutPage from '../../components/CheckoutPage/CheckoutPage';
 import ContactData from '../ContactData/ContactData';
 
@@ -14,33 +14,39 @@ class Checkout extends Component {
 	};
 
 	render() {
-		return (
-			<div>
-				<CheckoutPage
-					ingredients={this.props.ing}
-					price={+this.props.totalPrice}
-					clickedContinue={this.checkoutContinue}
-					clickedCancel={this.checkoutCancel}
-				/>
-				<Route
-					path="/checkout/contactdata"
-					render={() => (
-						<ContactData
-							ingredients={this.props.ing}
-							price={this.props.totalPrice}
-							{...this.props} //envia para o componente ContactData e/ou usa aqui como paramentro os 'props' do route(ou do link se tivesse)
-						/>
-					)}
-				/>
-			</div>
-		);
+		let summary = <Redirect to="/" />;
+
+		if (this.props.ing) {
+			summary = (
+				<div>
+					<CheckoutPage
+						ingredients={this.props.ing}
+						price={+this.props.totalPrice}
+						clickedContinue={this.checkoutContinue}
+						clickedCancel={this.checkoutCancel}
+					/>
+					<Route
+						path="/checkout/contactdata"
+						render={() => (
+							<ContactData
+								ingredients={this.props.ing}
+								price={this.props.totalPrice}
+								{...this.props} //envia para o componente ContactData e/ou usa aqui como paramentro os 'props' do route(ou do link se tivesse)
+							/>
+						)}
+					/>
+				</div>
+			);
+		}
+
+		return summary;
 	}
 }
 
 const mapStateToProps = state => {
 	return {
-		ing: state.ing,
-		totalPrice: state.totalPrice
+		ing: state.burger.ing,
+		totalPrice: state.burger.totalPrice
 	};
 };
 
