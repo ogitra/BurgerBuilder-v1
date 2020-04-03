@@ -1,27 +1,17 @@
 import React, { Component } from 'react';
 import Order from '../../components/Order/Order';
-import axios from '../../components/Axios/axios-orders';
+import { connect } from 'react-redux';
+import * as actions from '../../store/actions/index';
 
 class Orders extends Component {
-	state = {
-		orders: []
-	};
-
 	componentDidMount = () => {
-		const orders = [];
-		axios.get('/orders.json').then(response => {
-			for (let item in response.data) {
-				orders.push({ ...response.data[item], id: item }); //add assim pra pegar oq ja tinha e criar uma categoria a mais( 'id')
-			}
-			this.setState({ orders: orders });
-			console.log(orders);
-		});
+		this.props.fetchOrdersFromGet();
 	};
 
 	render() {
 		return (
 			<div>
-				{this.state.orders.map(item => (
+				{this.props.orders.map(item => (
 					<Order key={item.id} number={item.id} ingredients={item.ingredients} price={+item.price} />
 				))}
 			</div>
@@ -29,4 +19,15 @@ class Orders extends Component {
 	}
 }
 
-export default Orders;
+const mapStateToProps = state => {
+	return {
+		orders: state.orders.orders
+	};
+};
+
+const mapDispatchToProps = dispatch => {
+	return {
+		fetchOrdersFromGet: () => dispatch(actions.initOrders())
+	};
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Orders);

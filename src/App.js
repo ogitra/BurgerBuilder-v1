@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Layout from './containers/Layout/Layout';
-import BurgerBuilder2 from './containers/BurgerBuilder/BurgerBuilder2';
+import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 
 import Checkout from './containers/Checkout/Checkout';
 import { Route, Switch } from 'react-router-dom';
@@ -14,7 +14,7 @@ class App extends Component {
 					<Switch>
 						<Route path="/checkout" component={Checkout} />
 						<Route path="/orders" component={Orders} />
-						<Route component={BurgerBuilder2} />
+						<Route component={BurgerBuilder} />
 					</Switch>
 				</Layout>
 			</div>
