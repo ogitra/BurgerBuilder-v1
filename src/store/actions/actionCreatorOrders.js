@@ -8,9 +8,11 @@ export const setOrders = response => {
 	};
 };
 
-export const initOrders = () => {
+export const initOrders = (token, localId) => {
 	return dispatch => {
-		axios.get('/orders.json').then(response => {
+		//filtro do firebase 'orderBy', poe isso no firebase tbm como parametro para filtro
+		const queryParams = '?auth=' + token + '&orderBy="localId"&equalTo="' + localId + '"';
+		axios.get('/orders.json' + queryParams).then(response => {
 			dispatch(setOrders(response.data));
 		});
 	};

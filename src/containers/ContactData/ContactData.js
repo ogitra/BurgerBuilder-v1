@@ -101,7 +101,8 @@ class ContactData extends Component {
 		button: false
 	};
 
-	onOrderHandler = () => {
+	onOrderHandler = event => {
+		event.preventDefault();
 		//faz um loop no state atualizado e pega apenas o 'nome':'nome da pessoa, country:country da pessoa, etc...
 		let contactDataForPost = {};
 		for (let prop in this.state.orderForm) {
@@ -111,25 +112,30 @@ class ContactData extends Component {
 		const order = {
 			ingredients: this.props.ing,
 			price: this.props.totalPrice,
-			contact: contactDataForPost
+			contact: contactDataForPost,
+			localId: this.props.localId
 		};
 
-		this.props.orderHandler(order);
+		this.props.orderHandler(order, this.props.token);
 	};
 	inputChangedHandler = (evt, inputName) => {
 		let updatedState = { ...this.state.orderForm };
 		updatedState[inputName].value = evt.target.value;
-		updatedState[inputName].value.length < updatedState[inputName].validation.minLength
-			? (updatedState[inputName].validation.valid = false)
-			: (updatedState[inputName].validation.valid = true) &&
-				(updatedState[inputName].validation.validOrderButtton = true);
+
+		if (updatedState[inputName].value.length > updatedState[inputName].validation.minLength) {
+			updatedState[inputName].validation.valid = true;
+			updatedState[inputName].validation.validOrderButtton = true;
+		} else {
+			updatedState[inputName].validation.valid = false;
+			updatedState[inputName].validation.validOrderButtton = false;
+		}
 
 		this.setState({ orderForm: updatedState, button: true });
 	};
 
 	onRedirectHandler = () => {
 		this.props.showModalFalseAfterFinish();
-		this.props.history.goBack();
+		this.props.history.go('/');
 	};
 
 	render() {
@@ -146,11 +152,7 @@ class ContactData extends Component {
 
 		const disabledButton = validOrderButtton.includes(false);
 
-		let button = (
-			<Button btnStyle="Success" clicked={this.onOrderHandler}>
-				ORDER
-			</Button>
-		);
+		let button = <Button btnStyle="Success">ORDER</Button>;
 
 		if (disabledButton) {
 			button = (
@@ -163,7 +165,7 @@ class ContactData extends Component {
 		let ContactData = (
 			<div className={classes.ContactData}>
 				<h4> Enter your contact data</h4>
-				<form>
+				<form onSubmit={this.onOrderHandler}>
 					{elementsArr.map(item => {
 						return (
 							<Input
@@ -178,11 +180,11 @@ class ContactData extends Component {
 							/>
 						);
 					})}
+					{button}
 				</form>
-				{button}
 
 				<Modal showModal={this.props.reduxShowModal}>
-					<p>FEITO</p>
+					<p>FEITO, MELHORAR ESTA TELA</p>
 					<button onClick={this.onRedirectHandler}> Voltar </button>
 				</Modal>
 			</div>
@@ -196,14 +198,16 @@ const mapStateToProps = state => {
 	return {
 		ing: state.burger.ing,
 		totalPrice: state.burger.totalPrice,
-		reduxShowModal: state.contactData.showModal
+		reduxShowModal: state.contactData.showModal,
+		token: state.auth.idToken,
+		localId: state.auth.localId
 	};
 };
 
 const mapDispatchToProps = dispatch => {
 	return {
-		orderHandler: order => {
-			dispatch(actions.orderHandler(order));
+		orderHandler: (order, token) => {
+			dispatch(actions.orderHandler(order, token));
 		},
 		showModalFalseAfterFinish: () => {
 			dispatch(actions.setModalHandler());

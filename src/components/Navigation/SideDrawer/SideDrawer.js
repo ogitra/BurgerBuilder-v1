@@ -19,7 +19,7 @@ const sideDrawer = props => {
 				</div>
 
 				<nav>
-					<NavigationItems clicked={props.clicked} />
+					<NavigationItems clicked={props.clicked} auth={props.auth} />
 				</nav>
 			</div>
 		</Aux>
