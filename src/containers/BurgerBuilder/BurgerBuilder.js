@@ -66,7 +66,6 @@ class BurgerBuilder extends Component {
 					clickedCancel={this.cancelOrderHandler}
 					clickedContinue={this.continueOrderHandler}
 					price={this.props.totalPrice}
-					checkout={JSON.stringify(this.state.ingredients)}
 				/>
 			);
 		}

@@ -2,7 +2,8 @@ import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
 	orders: [],
-	showModal: false
+	showModal: false,
+	redirect: false
 };
 
 const reducer = (state = initialState, action) => {
@@ -11,13 +12,15 @@ const reducer = (state = initialState, action) => {
 			return {
 				...state,
 				orders: state.orders.concat(action.order),
-				showModal: true
+				showModal: true,
+				redirect: false
 			};
+
 		case actionTypes.SET_MODAL_HANDLER:
 			return {
 				...state,
-
-				showModal: false
+				showModal: false,
+				redirect: true
 			};
 
 		default:
