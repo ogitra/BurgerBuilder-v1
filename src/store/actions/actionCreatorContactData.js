@@ -12,9 +12,10 @@ export const setOrderHandler = order => {
 	};
 };
 
-export const orderHandler = order => {
+export const orderHandler = (order, token) => {
 	return dispatch => {
-		axios.post('/orders.json', order).then(() => {
+		//'?auth' pq agr colocamos uma condição no firebase q exige isso para mostrar algumas coisas
+		axios.post('/orders.json?auth=' + token, order).then(() => {
 			dispatch(setOrderHandler(order));
 		});
 	};

@@ -11,7 +11,8 @@ const initialState = {
 	},
 	loadBurgerPage: false,
 	totalPrice: 4,
-	disabledOrder: true
+	disabledOrder: true,
+	building: false
 };
 //embaixo uma 'utility' (delIng)fora do arquivo utility pq é específica
 const delIng = (state, action) => {
@@ -30,7 +31,8 @@ const delIng = (state, action) => {
 	return updateObjects(state, {
 		ing: ingredient,
 		totalPrice: newPrice,
-		disabledOrder: order === 0
+		disabledOrder: order === 0,
+		building:true
 	});
 };
 
@@ -43,7 +45,8 @@ const reducer = (state = initialState, action) => {
 					[action.ingred]: state.ing[action.ingred] + 1
 				},
 				totalPrice: state.totalPrice + state.ingPrices[action.ingred],
-				disabledOrder: false
+				disabledOrder: false,
+				building:true
 			});
 		case actionTypes.DEL_ING:
 			return delIng(state, action);
@@ -53,7 +56,8 @@ const reducer = (state = initialState, action) => {
 				...state,
 				ing: action.ingredients,
 				totalPrice: 4,
-				loadBurgerPage: true
+				loadBurgerPage: true,
+				building:false
 			};
 
 		default:

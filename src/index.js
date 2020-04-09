@@ -9,12 +9,15 @@ import { Provider } from 'react-redux';
 import burger from './store/reducers/burger';
 import contactData from './store/reducers/contactData';
 import orders from './store/reducers/orders';
+import auth from './store/reducers/auth';
+
 import thunk from 'redux-thunk';
 
 const rootReducer = combineReducers({
 	burger: burger,
 	contactData: contactData,
-	orders: orders
+	orders: orders,
+	auth: auth
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

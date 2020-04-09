@@ -1,52 +1,44 @@
 import React, { Component } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import CheckoutPage from '../../components/CheckoutPage/CheckoutPage';
 import ContactData from '../ContactData/ContactData';
+import Button from '../../components/UI/Button/Button';
 
 import { connect } from 'react-redux';
 
 class Checkout extends Component {
 	checkoutContinue = () => {
-		this.props.history.replace(this.props.match.url + '/contactdata');
+		if (this.props.auth) {
+			this.props.history.replace(this.props.match.url + '/contactdata');
+		} else {
+			this.props.history.push('/auth');
+		}
 	};
 	checkoutCancel = () => {
 		this.props.history.goBack();
 	};
 
 	render() {
-		let summary = <Redirect to="/" />;
+		return (
+			<div>
+				<CheckoutPage
+					ingredients={this.props.ing}
+					price={+this.props.totalPrice}
+					clickedContinue={this.checkoutContinue}
+					clickedCancel={this.checkoutCancel}
+				/>
 
-		if (this.props.ing) {
-			summary = (
-				<div>
-					<CheckoutPage
-						ingredients={this.props.ing}
-						price={+this.props.totalPrice}
-						clickedContinue={this.checkoutContinue}
-						clickedCancel={this.checkoutCancel}
-					/>
-					<Route
-						path="/checkout/contactdata"
-						render={() => (
-							<ContactData
-								ingredients={this.props.ing}
-								price={this.props.totalPrice}
-								{...this.props} //envia para o componente ContactData e/ou usa aqui como paramentro os 'props' do route(ou do link se tivesse)
-							/>
-						)}
-					/>
-				</div>
-			);
-		}
-
-		return summary;
+				<Route path="/checkout/contactdata" render={() => <ContactData />} />
+			</div>
+		);
 	}
 }
 
 const mapStateToProps = state => {
 	return {
 		ing: state.burger.ing,
-		totalPrice: state.burger.totalPrice
+		totalPrice: state.burger.totalPrice,
+		auth: state.auth.idToken
 	};
 };
 
