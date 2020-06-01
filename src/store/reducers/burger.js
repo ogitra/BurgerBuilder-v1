@@ -32,7 +32,7 @@ const delIng = (state, action) => {
 		ing: ingredient,
 		totalPrice: newPrice,
 		disabledOrder: order === 0,
-		building:true
+		building: true
 	});
 };
 
@@ -46,7 +46,7 @@ const reducer = (state = initialState, action) => {
 				},
 				totalPrice: state.totalPrice + state.ingPrices[action.ingred],
 				disabledOrder: false,
-				building:true
+				building: true
 			});
 		case actionTypes.DEL_ING:
 			return delIng(state, action);
@@ -57,7 +57,8 @@ const reducer = (state = initialState, action) => {
 				ing: action.ingredients,
 				totalPrice: 4,
 				loadBurgerPage: true,
-				building:false
+				building: false,
+				disabledOrder: true
 			};
 
 		default:

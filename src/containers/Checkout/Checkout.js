@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import CheckoutPage from '../../components/CheckoutPage/CheckoutPage';
 import ContactData from '../ContactData/ContactData';
-import Button from '../../components/UI/Button/Button';
 
 import { connect } from 'react-redux';
 

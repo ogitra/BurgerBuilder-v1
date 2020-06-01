@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import Button from '../../components/UI/Button/Button';
 import classes from './ContactData.module.css';
 import Modal from '../../components/UI/Modal/Modal';
-
 import Input from '../../components/UI/Input/Input';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/index';
+import { Redirect } from 'react-router-dom';
 
 class ContactData extends Component {
 	state = {
@@ -98,7 +98,8 @@ class ContactData extends Component {
 			}
 		},
 
-		button: false
+		button: false,
+		afterDoneRedirect: false
 	};
 
 	onOrderHandler = event => {
@@ -135,7 +136,6 @@ class ContactData extends Component {
 
 	onRedirectHandler = () => {
 		this.props.showModalFalseAfterFinish();
-		this.props.history.go('/');
 	};
 
 	render() {
@@ -161,6 +161,18 @@ class ContactData extends Component {
 				</Button>
 			);
 		}
+		let modalDoneAndRedirect = (
+			<Modal showModal={this.props.reduxShowModal}>
+				<p>DONE!!</p>
+				<Button btnStyle={'Success'} clicked={this.onRedirectHandler}>
+					BACK
+				</Button>
+			</Modal>
+		);
+
+		if (this.props.redirect) {
+			modalDoneAndRedirect = <Redirect to="/" />;
+		}
 
 		let ContactData = (
 			<div className={classes.ContactData}>
@@ -182,11 +194,7 @@ class ContactData extends Component {
 					})}
 					{button}
 				</form>
-
-				<Modal showModal={this.props.reduxShowModal}>
-					<p>FEITO, MELHORAR ESTA TELA</p>
-					<button onClick={this.onRedirectHandler}> Voltar </button>
-				</Modal>
+				{modalDoneAndRedirect}
 			</div>
 		);
 
@@ -200,7 +208,8 @@ const mapStateToProps = state => {
 		totalPrice: state.burger.totalPrice,
 		reduxShowModal: state.contactData.showModal,
 		token: state.auth.idToken,
-		localId: state.auth.localId
+		localId: state.auth.localId,
+		redirect: state.contactData.redirect
 	};
 };
 
